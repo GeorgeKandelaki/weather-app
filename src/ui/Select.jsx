@@ -3,12 +3,13 @@ import styled from "styled-components";
 
 import iconCheckmark from "../assets/images/icon-checkmark.svg";
 import iconArrow from "../assets/images/icon-dropdown.svg";
+import { capitalize } from "../utils/utils";
 
 const StyledSelect = styled.div`
     position: relative;
 `;
 const OpenButton = styled.button`
-    background-color: var(--color-neutral-800);
+    background-color: var(--color-neutral-700);
     padding: 1.5rem 2rem;
     border: none;
     border-radius: 0.7rem;
@@ -32,14 +33,6 @@ const DropdownButton = styled.button``;
 const DropdownContainer = styled.div``;
 
 const DropdownHeading = styled.p``;
-
-function capitalize(str) {
-    return str
-        .trim()
-        .split(/\s+/)
-        .map((word) => word[0].toUpperCase() + word.slice(1))
-        .join(" ");
-}
 
 function Select({ label, icon, options }) {
     const [isOpen, setIsOpen] = useState(false);

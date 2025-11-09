@@ -17,6 +17,12 @@ const GlobalStyles = createGlobalStyle`
         --color-blue-700: hsl(248, 70%, 36%);
     }
 
+    *, *::before, *::after{
+        margin: 0;
+        padding:0;
+        box-sizing: border-box;
+    }
+
     html{
         font-size: 62.5%;
     }

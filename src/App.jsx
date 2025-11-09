@@ -6,6 +6,7 @@ import Header from "./ui/Header";
 import WeatherDetail from "./components/WeatherDetail";
 import Search from "./ui/Search";
 import { UnitsProvider } from "./contexts/UnitsContext";
+import { WeatherProvider } from "./contexts/WeatherContext";
 
 const StyledApp = styled.div`
     margin: 4.8rem 9.6rem;
@@ -29,14 +30,18 @@ function App() {
         <>
             <GlobalStyles />
             <UnitsProvider>
-                <StyledApp>
-                    <Header />
-                    <SearchContainer>
-                        <h1>How's the sky looking today?</h1>
-                        <Search value={search} onChange={setSearch} />
-                    </SearchContainer>
-                    <WeatherDetail />
-                </StyledApp>
+                <WeatherProvider>
+                    <StyledApp>
+                        <Header />
+
+                        <SearchContainer>
+                            <h1>How's the sky looking today?</h1>
+                            <Search value={search} onChange={setSearch} />
+                        </SearchContainer>
+
+                        <WeatherDetail />
+                    </StyledApp>
+                </WeatherProvider>
             </UnitsProvider>
         </>
     );
