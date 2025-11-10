@@ -13,7 +13,9 @@ const Temperatures = styled.div`
     align-items: center;
     justify-content: space-between;
 `;
-const MinTemp = styled.p``;
+const MinTemp = styled.p`
+    color: var(--color-neutral-300);
+`;
 const MaxTemp = styled.p``;
 
 function DailyForecastItem({ forecast }) {

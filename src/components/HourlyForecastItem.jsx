@@ -19,7 +19,10 @@ const Icon = styled.div`
     }
 `;
 const Hour = styled.p``;
-const MaxTemp = styled.p``;
+const MaxTemp = styled.p`
+    color: var(--color-neutral-200);
+    font-size: 2rem;
+`;
 
 function HourlyForecastItem({ forecast }) {
     return (

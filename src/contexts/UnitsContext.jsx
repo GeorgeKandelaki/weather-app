@@ -10,24 +10,39 @@ function UnitsProvider({ children }) {
     const options = useMemo(
         () => ({
             temperature: [
-                { label: "Celsius (C)", value: "celsius", active: true, handleClick: setTemperature("celsius") },
+                {
+                    label: "Celsius (C)",
+                    value: "celsius",
+                    active: temperature === "celsius",
+                    handleClick: () => setTemperature("celsius"),
+                },
                 {
                     label: "Fahrenheit (F)",
                     value: "fahrenheit",
-                    active: false,
-                    handleClick: setTemperature("fahrenheit"),
+                    active: temperature === "fahrenheit",
+                    handleClick: () => setTemperature("fahrenheit"),
                 },
             ],
             wind_speed: [
-                { label: "km/h", value: "kmh", active: true, handleClick: setWindSpeed("kmh") },
-                { label: "mph", value: "mph", active: false, handleClick: setWindSpeed("mph") },
+                { label: "km/h", value: "kmh", active: windSpeed === "kmh", handleClick: () => setWindSpeed("kmh") },
+                { label: "mph", value: "mph", active: windSpeed === "mph", handleClick: () => setWindSpeed("mph") },
             ],
             precipitation: [
-                { label: "Millimeters (mm)", value: "mm", active: true, handleClick: setPrecipitation("mm") },
-                { label: "Inches", value: "inch", active: false, handleClick: setPrecipitation("inch") },
+                {
+                    label: "Millimeters (mm)",
+                    value: "mm",
+                    active: precipitation === "mm",
+                    handleClick: () => setPrecipitation("mm"),
+                },
+                {
+                    label: "Inches",
+                    value: "inch",
+                    active: precipitation === "inch",
+                    handleClick: () => setPrecipitation("inch"),
+                },
             ],
         }),
-        []
+        [temperature, windSpeed, precipitation]
     );
 
     return (
