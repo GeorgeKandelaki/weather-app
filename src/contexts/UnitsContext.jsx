@@ -45,10 +45,20 @@ function UnitsProvider({ children }) {
         [temperature, windSpeed, precipitation]
     );
 
+    const unitsObjAPI = useMemo(
+        () => ({
+            temperature_unit: temperature,
+            wind_speed_unit: windSpeed,
+            precipitation_unit: precipitation,
+        }),
+        [temperature, windSpeed, precipitation]
+    );
+
     return (
         <UnitsContext.Provider
             value={{
                 options,
+                unitsObjAPI,
                 temperature,
                 setTemperature,
                 windSpeed,
