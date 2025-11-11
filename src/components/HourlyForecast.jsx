@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import HourlyForecastItem from "./HourlyForecastItem";
 import Select from "../ui/Select";
+import { useWeather } from "../contexts/WeatherContext";
 
 const StyledHourlyForecast = styled.div`
     grid-column: 2 / 3;
@@ -25,38 +26,9 @@ const Forecast = styled.div`
     margin-top: 2.5rem;
 `;
 
-const days = [
-    {
-        label: "Monday",
-        value: "monday",
-    },
-    {
-        label: "Tuesday",
-        value: "tuesday",
-    },
-    {
-        label: "Wednesday",
-        value: "wednesday",
-    },
-    {
-        label: "Thursday",
-        value: "thursday",
-    },
-    {
-        label: "Friday",
-        value: "friday",
-    },
-    {
-        label: "Saturday",
-        value: "saturday",
-    },
-    {
-        label: "Sunday",
-        value: "sunday",
-    },
-];
-
 function HourlyForecast({ hours }) {
+    const { days, hourlyForecast } = useWeather();
+
     return (
         <StyledHourlyForecast>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>

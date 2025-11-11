@@ -38,6 +38,8 @@ const SearchButton = styled.button`
     }
 `;
 
+const Results = styled.div``;
+
 function Search({ value, onChange }) {
     return (
         <div style={{ display: "flex", gap: "1.5rem" }}>

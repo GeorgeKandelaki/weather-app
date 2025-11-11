@@ -38,7 +38,9 @@ class APIWeather {
 
     async #fetch(endpoint, fields) {
         try {
-            const { data } = await axios.get(`${this.url}&${endpoint}=${fields}`);
+            const response = await axios.get(`${this.url}&${endpoint}=${fields}`);
+            const { data } = response;
+
             return data;
         } catch (err) {
             console.error(`Weather API fetch error [${endpoint}]:`, err.message);
@@ -46,11 +48,13 @@ class APIWeather {
         }
     }
 
-    getCurrentWeather(fields = "weather_code,temperature_2m,wind_speed_10m") {
+    getCurrentWeather(
+        fields = "weather_code,temperature_2m,precipitation,relative_humidity_2m,apparent_temperature,wind_speed_10m,"
+    ) {
         return this.#fetch("current", fields);
     }
 
-    getDailyWeather(fields = "weather_code,temperature_2m_max,temperature_2m_min,wind_speed_10m") {
+    getDailyWeather(fields = "weather_code,temperature_2m_max,temperature_2m_min") {
         return this.#fetch("daily", fields);
     }
 
