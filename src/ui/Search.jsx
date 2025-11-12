@@ -12,6 +12,7 @@ const StyledSearch = styled.div`
     width: 50rem;
 
     & input {
+        width: 100%;
         background-color: inherit;
         border: none;
         outline: none;

@@ -78,6 +78,15 @@ const GlobalStyles = createGlobalStyle`
         max-width: 100%;
     }
 
+    *::-webkit-scrollbar {
+        display: none;
+    }
+
+    * {
+        -ms-overflow-style: none;  /* IE and Edge */
+        scrollbar-width: none;  /* Firefox */
+    }
+
     @media screen and (max-width: 75em){
         html{
             font-size: 50%;

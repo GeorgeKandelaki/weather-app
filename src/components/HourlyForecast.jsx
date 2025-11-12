@@ -2,6 +2,7 @@ import styled from "styled-components";
 import HourlyForecastItem from "./HourlyForecastItem";
 import Select from "../ui/Select";
 import { useWeather } from "../contexts/WeatherContext";
+import { capitalize } from "../utils/utils";
 
 const StyledHourlyForecast = styled.div`
     grid-column: 2 / 3;
@@ -22,22 +23,27 @@ const Forecast = styled.div`
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    height: 100%;
 
     margin-top: 2.5rem;
+    overflow: auto !important;
+    max-height: 60rem;
 `;
 
-function HourlyForecast({ hours }) {
-    const { days, hourlyForecast } = useWeather();
+function HourlyForecast({ hours, isLoading }) {
+    const { days } = useWeather();
+
+    if (isLoading) return null;
 
     return (
         <StyledHourlyForecast>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <Heading>Hourly Forecast</Heading>
-                <Select options={days} label="Monday" />
+                <Select options={days} label={capitalize(hours[0].weekday)} />
             </div>
             <Forecast>
                 {hours.map((hour) => (
-                    <HourlyForecastItem forecast={hour} key={hour.hour} />
+                    <HourlyForecastItem forecast={hour} key={hour.id} isLoading={isLoading} />
                 ))}
             </Forecast>
         </StyledHourlyForecast>

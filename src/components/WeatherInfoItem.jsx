@@ -16,15 +16,16 @@ const Label = styled.p`
     color: var(--color-neutral-300);
     font-weight: 600;
 `;
+
 const Value = styled.p`
     font-size: 3rem;
 `;
 
-function WeatherInfoItem({ data }) {
+function WeatherInfoItem({ data, isLoading }) {
     return (
         <StyledWeatherInfoItem>
             <Label>{data.label}</Label>
-            <Value>{data.value}</Value>
+            <Value>{isLoading ? "--" : data.value}</Value>
         </StyledWeatherInfoItem>
     );
 }

@@ -7,7 +7,8 @@ const StyledHourlyForecastItem = styled.div`
 
     background-color: var(--color-neutral-700);
     padding: 0.4rem 2rem 0.4rem 1rem;
-    border-radius: 1.3rem;
+    border-radius: 1rem;
+    min-height: 5.5rem;
 `;
 
 const Icon = styled.div`
@@ -24,16 +25,22 @@ const MaxTemp = styled.p`
     font-size: 2rem;
 `;
 
-function HourlyForecastItem({ forecast }) {
+function HourlyForecastItem({ forecast, isLoading }) {
     return (
         <StyledHourlyForecastItem>
-            <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                <Icon>
-                    <img src={forecast.icon} alt="Image of the weather" />
-                </Icon>
-                <Hour>{forecast.hour}</Hour>
-            </div>
-            <MaxTemp>{forecast.maxTemp}</MaxTemp>
+            {isLoading ? (
+                ""
+            ) : (
+                <>
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                        <Icon>
+                            <img src={forecast.icon} alt="Image of the weather" />
+                        </Icon>
+                        <Hour>{forecast.hour}</Hour>
+                    </div>
+                    <MaxTemp>{forecast.maxTemp}°</MaxTemp>
+                </>
+            )}
         </StyledHourlyForecastItem>
     );
 }

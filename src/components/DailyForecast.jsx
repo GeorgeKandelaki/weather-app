@@ -18,13 +18,13 @@ const Forecast = styled.div`
     gap: 1.5rem;
 `;
 
-function DailyForecast({ days }) {
+function DailyForecast({ days, isLoading }) {
     return (
         <StyledDailyForecast>
             <Heading>Daily Forecast</Heading>
             <Forecast>
                 {days.map((day) => (
-                    <DailyForecastItem forecast={day} key={day.day} />
+                    <DailyForecastItem forecast={day} key={day.day} isLoading={isLoading} />
                 ))}
             </Forecast>
         </StyledDailyForecast>

@@ -5,7 +5,11 @@ const StyledDailyForecastItem = styled.div`
     padding: 1.8rem 1.5rem;
     border-radius: 1.5rem;
     text-align: center;
+
+    min-height: 13rem;
+    width: 100%;
 `;
+
 const Day = styled.p``;
 const Icon = styled.div``;
 const Temperatures = styled.div`
@@ -18,17 +22,23 @@ const MinTemp = styled.p`
 `;
 const MaxTemp = styled.p``;
 
-function DailyForecastItem({ forecast }) {
+function DailyForecastItem({ forecast, isLoading }) {
     return (
         <StyledDailyForecastItem>
-            <Day>{forecast.day}</Day>
-            <Icon>
-                <img src={forecast.icon} alt="Icon of the weather" />
-            </Icon>
-            <Temperatures>
-                <MaxTemp>{forecast.maxTemp}</MaxTemp>
-                <MinTemp>{forecast.minTemp}</MinTemp>
-            </Temperatures>
+            {isLoading ? (
+                ""
+            ) : (
+                <>
+                    <Day>{forecast.day}</Day>
+                    <Icon>
+                        <img src={forecast.icon} alt="Icon of the weather" />
+                    </Icon>
+                    <Temperatures>
+                        <MaxTemp>{Math.round(forecast.maxTemp)}°</MaxTemp>
+                        <MinTemp>{Math.round(forecast.minTemp)}°</MinTemp>
+                    </Temperatures>
+                </>
+            )}
         </StyledDailyForecastItem>
     );
 }

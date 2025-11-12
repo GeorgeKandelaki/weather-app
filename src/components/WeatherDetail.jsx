@@ -11,6 +11,8 @@ import iconSnow from "../assets/images/icon-snow.webp";
 import iconStorm from "../assets/images/icon-storm.webp";
 import iconOvercast from "../assets/images/icon-overcast.webp";
 import iconDrizzle from "../assets/images/icon-drizzle.webp";
+import { useWeather } from "../contexts/WeatherContext";
+import { formatDate } from "../utils/utils";
 
 const StyledWeatherDetail = styled.div`
     display: grid;
@@ -21,111 +23,29 @@ const StyledWeatherDetail = styled.div`
     margin-top: 3.2rem;
 `;
 
-const days = [
-    {
-        day: "Mon",
-        icon: iconRain,
-        maxTemp: "20",
-        minTemp: "15",
-    },
-    {
-        day: "Tue",
-        icon: iconRain,
-        maxTemp: "20",
-        minTemp: "15",
-    },
-    {
-        day: "Wed",
-        icon: iconRain,
-        maxTemp: "20",
-        minTemp: "15",
-    },
-    {
-        day: "Thu",
-        icon: iconRain,
-        maxTemp: "20",
-        minTemp: "15",
-    },
-    {
-        day: "Fri",
-        icon: iconRain,
-        maxTemp: "20",
-        minTemp: "15",
-    },
-    {
-        day: "Sat",
-        icon: iconRain,
-        maxTemp: "20",
-        minTemp: "15",
-    },
-    {
-        day: "Sun",
-        icon: iconRain,
-        maxTemp: "20",
-        minTemp: "15",
-    },
-];
-
-const hours = [
-    {
-        icon: iconSnow,
-        hour: "3PM",
-        maxTemp: "20",
-    },
-    {
-        icon: iconSnow,
-        hour: "4PM",
-        maxTemp: "20",
-    },
-    {
-        icon: iconSnow,
-        hour: "5PM",
-        maxTemp: "20",
-    },
-    {
-        icon: iconSnow,
-        hour: "6PM",
-        maxTemp: "20",
-    },
-    {
-        icon: iconSnow,
-        hour: "7PM",
-        maxTemp: "20",
-    },
-    {
-        icon: iconSnow,
-        hour: "8PM",
-        maxTemp: "20",
-    },
-    {
-        icon: iconSnow,
-        hour: "9PM",
-        maxTemp: "20",
-    },
-    {
-        icon: iconSnow,
-        hour: "10PM",
-        maxTemp: "20",
-    },
-];
-
 function WeatherDetail() {
+    const { currentWeather, isLoading, dailyForecastObj, day, hourlyForecastObj, unitsObjAPI } = useWeather();
+    const info = [
+        { label: "Feels Like", value: `${currentWeather.apparent_temperature}°` },
+        { label: "Humidity", value: `${currentWeather.relative_humidity_2m}%` },
+        { label: "Wind", value: `${currentWeather.wind_speed_10m} ${unitsObjAPI.wind_speed_unit}` },
+        { label: "Precipitation", value: `${currentWeather.precipitation} ${unitsObjAPI.precipitation_unit}` },
+    ];
+
+    if (isLoading) return null;
+
     return (
         <StyledWeatherDetail>
             <CurrentWeather
-                icon={iconSunny}
-                temp={20}
-                location="Berlin, Germany"
-                date="Tuesday, Aug 5, 2025"
-                info={[
-                    { label: "Feels Like", value: "18°" },
-                    { label: "Humidity", value: "46%" },
-                    { label: "Wind", value: "14 km/h" },
-                    { label: "Precipitation", value: "0 mm" },
-                ]}
+                icon={currentWeather.icon}
+                temp={currentWeather.temperature_2m}
+                location={currentWeather.city}
+                date={formatDate(currentWeather.time)}
+                info={info}
+                isLoading={isLoading}
             />
-            <DailyForecast days={days} />
-            <HourlyForecast hours={hours} />
+            <DailyForecast days={dailyForecastObj} isLoading={isLoading} />
+            <HourlyForecast hours={hourlyForecastObj[day]} isLoading={isLoading} />
         </StyledWeatherDetail>
     );
 }

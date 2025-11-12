@@ -2,6 +2,7 @@ import styled from "styled-components";
 import WeatherInfoItem from "./WeatherInfoItem";
 
 import bgToday from "../assets/images/bg-today-large.svg";
+import Loading from "../ui/Loading";
 
 const StyledCurrentWeather = styled.div`
     font-family: "DM Sans", sans-serif;
@@ -13,11 +14,9 @@ const StyledCurrentWeather = styled.div`
 
 const Weather = styled.div`
     padding: 0 2rem;
-    background: url(${bgToday});
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
+    background-color: var(--color-neutral-700) !important;
     border-radius: 2rem;
+    min-height: 30rem;
 
     display: flex;
     align-items: center;
@@ -26,7 +25,7 @@ const Weather = styled.div`
 
 const WeatherInfo = styled.div`
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     gap: 1.8rem;
 `;
 
@@ -57,24 +56,41 @@ const TempContainer = styled.div`
     }
 `;
 
-function CurrentWeather({ temp, location, date, icon, info }) {
+function CurrentWeather({ temp, location, date, icon, info, isLoading }) {
     return (
         <StyledCurrentWeather>
-            <Weather>
-                <div>
-                    <Location>{location}</Location>
-                    <Date>{date}</Date>
-                </div>
+            <Weather
+                style={
+                    isLoading
+                        ? { justifyContent: "center" }
+                        : {
+                              background: `url(${bgToday})`,
+                              backgroundRepeat: "no-repeat",
+                              backgroundSize: "cover",
+                              backgroundPosition: "center",
+                          }
+                }
+            >
+                {isLoading ? (
+                    <Loading />
+                ) : (
+                    <>
+                        <div>
+                            <Location>{location}</Location>
+                            <Date>{date}</Date>
+                        </div>
 
-                <TempContainer>
-                    <img src={icon} alt="Icon of the weather" />
-                    <Temperature>{temp}&deg;</Temperature>
-                </TempContainer>
+                        <TempContainer>
+                            <img src={icon} alt="Icon of the weather" />
+                            <Temperature>{Math.round(temp)}&deg;</Temperature>
+                        </TempContainer>
+                    </>
+                )}
             </Weather>
 
             <WeatherInfo>
                 {info.map((el) => (
-                    <WeatherInfoItem data={el} key={el.label} />
+                    <WeatherInfoItem data={el} key={el.label} isLoading={isLoading} />
                 ))}
             </WeatherInfo>
         </StyledCurrentWeather>

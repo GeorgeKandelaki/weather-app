@@ -10,7 +10,6 @@ const StyledSelect = styled.div`
 
     display: flex;
     justify-content: end;
-    border: 1px solid var(--color-neutral-600);
 `;
 
 const OpenButton = styled.button`
@@ -82,6 +81,7 @@ const DropdownHeading = styled.p`
 
 function Select({ label, icon, options }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [select, setSelect] = useState(label || "");
 
     function loopOverOptions(data) {
         const children = [];
@@ -113,7 +113,18 @@ function Select({ label, icon, options }) {
             }
         } else {
             for (let i = 0; i < data.length; i++) {
-                children.push(<DropdownButton key={data[i].value}>{data[i].label}</DropdownButton>);
+                children.push(
+                    <DropdownButton
+                        key={data[i].value}
+                        onClick={() => {
+                            data[i]?.handleClick?.();
+                            setSelect(data[i].label);
+                            setIsOpen(false);
+                        }}
+                    >
+                        {data[i].label}
+                    </DropdownButton>
+                );
             }
         }
 
@@ -123,7 +134,8 @@ function Select({ label, icon, options }) {
     return (
         <StyledSelect>
             <OpenButton onClick={() => setIsOpen((open) => !open)}>
-                {icon && <img src={icon} alt="units icon" />} {label} <img src={iconArrow} alt="dropdown icon" />
+                {icon && <img src={icon} alt="units icon" />} {select}
+                <img src={iconArrow} alt="dropdown icon" />
             </OpenButton>
 
             {isOpen && <Dropdown border={options.constructor !== Array}>{loopOverOptions(options)}</Dropdown>}

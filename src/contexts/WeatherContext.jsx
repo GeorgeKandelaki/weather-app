@@ -1,134 +1,189 @@
 import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
-import { useUnits } from "./UnitsContext";
+import { isEmpty, formatDate } from "../utils/utils";
 import APIWeather from "../services/apiWeather";
+import { useUnits } from "./UnitsContext";
+
+import iconSunny from "../assets/images/icon-sunny.webp";
+import iconFog from "../assets/images/icon-fog.webp";
+import iconPartlyCloudy from "../assets/images/icon-partly-cloudy.webp";
+import iconRain from "../assets/images/icon-rain.webp";
+import iconSnow from "../assets/images/icon-snow.webp";
+import iconStorm from "../assets/images/icon-storm.webp";
+import iconOvercast from "../assets/images/icon-overcast.webp";
+import iconDrizzle from "../assets/images/icon-drizzle.webp";
 
 const WeatherContext = createContext();
-/*
-WMO Weather interpretation codes (WW)
-Code	Description
-0	Clear sky
-1, 2, 3	Mainly clear, partly cloudy, and overcast
-45, 48	Fog and depositing rime fog
-51, 53, 55	Drizzle: Light, moderate, and dense intensity
-56, 57	Freezing Drizzle: Light and dense intensity
-61, 63, 65	Rain: Slight, moderate and heavy intensity
-66, 67	Freezing Rain: Light and heavy intensity
-71, 73, 75	Snow fall: Slight, moderate, and heavy intensity
-77	Snow grains
-80, 81, 82	Rain showers: Slight, moderate, and violent
-85, 86	Snow showers slight and heavy
-95 *	Thunderstorm: Slight or moderate
-96, 99 *	Thunderstorm with slight and heavy hail
-*/
+
+// --- WEATHER ICON MAP ---
+const weatherIcons = {
+    0: iconSunny,
+    1: iconPartlyCloudy,
+    2: iconPartlyCloudy,
+    3: iconOvercast,
+    45: iconFog,
+    48: iconFog,
+    51: iconDrizzle,
+    53: iconDrizzle,
+    55: iconDrizzle,
+    56: iconDrizzle,
+    57: iconDrizzle,
+    61: iconRain,
+    63: iconRain,
+    65: iconRain,
+    66: iconRain,
+    67: iconRain,
+    71: iconSnow,
+    73: iconSnow,
+    75: iconSnow,
+    77: iconSnow,
+    80: iconRain,
+    81: iconRain,
+    82: iconRain,
+    85: iconSnow,
+    86: iconSnow,
+    95: iconStorm,
+    96: iconStorm,
+    99: iconStorm,
+};
+
+function determineIcon(code) {
+    return weatherIcons[code] || iconSunny;
+}
+
+function parseDailyWeather(data) {
+    if (isEmpty(data)) return null;
+
+    return data.time.map((date, i) => ({
+        day: formatDate(date, { weekday: "short" }),
+        maxTemp: data.temperature_2m_max[i],
+        minTemp: data.temperature_2m_min[i],
+        icon: determineIcon(data.weather_code[i]),
+    }));
+}
+
+function parseHourlyWeather(data) {
+    if (isEmpty(data)) return null;
+
+    const hoursByDay = {};
+
+    for (let i = 0; i < data.time.length; i += 24) {
+        // Determine the day from the first hour in this 24-hour chunk
+        const day = formatDate(data.time[i], { weekday: "long" }).toLowerCase();
+
+        // Slice the next 24 hours (or less if at the end of the dataset)
+        const hourlyChunk = data.time.slice(i, i + 24);
+
+        hoursByDay[day] = hourlyChunk.map((date, j) => {
+            const globalIndex = i + j; // Correct index for weather_code & temperature_2m
+            return {
+                icon: determineIcon(data.weather_code[globalIndex]),
+                maxTemp: data.temperature_2m[globalIndex],
+                hour: formatDate(date, { hour: "2-digit" }).split(",")[1].trim().replace(/^0/, "").replace(" ", ""), // clean leading zero
+                weekday: day,
+                id: globalIndex, // deterministic unique ID
+            };
+        });
+    }
+
+    return hoursByDay;
+}
 
 function WeatherProvider({ children }) {
     const { unitsObjAPI } = useUnits();
 
     const [location, setLocation] = useState([]);
-    const [currentWeather, setCurrentWeather] = useState([]);
-    const [dailyForecast, setDailyForecast] = useState([]);
-    const [hourlyForecast, setHourlyForecast] = useState([]);
-    const [day, setDay] = useState("monday");
+    const [currentWeather, setCurrentWeather] = useState({});
+    const [dailyForecast, setDailyForecast] = useState({});
+    const [hourlyForecast, setHourlyForecast] = useState({});
+    const [day, setDay] = useState(() => formatDate(Date.now(), { weekday: "long" }).toLowerCase());
     const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const weatherRef = useRef(new APIWeather(location[0], location[1], unitsObjAPI));
 
+    // --- Memoized Days (no re-renders) ---
     const days = useMemo(
-        () => [
-            {
-                label: "Monday",
-                value: "monday",
-                handleClick: () => setDay("monday"),
-            },
-            {
-                label: "Tuesday",
-                value: "tuesday",
-                handleClick: () => setDay("tuesday"),
-            },
-            {
-                label: "Wednesday",
-                value: "wednesday",
-                handleClick: () => setDay("wednesday"),
-            },
-            {
-                label: "Thursday",
-                value: "thursday",
-                handleClick: () => setDay("thursday"),
-            },
-            {
-                label: "Friday",
-                value: "friday",
-                handleClick: () => setDay("friday"),
-            },
-            {
-                label: "Saturday",
-                value: "saturday",
-                handleClick: () => setDay("saturday"),
-            },
-            {
-                label: "Sunday",
-                value: "sunday",
-                handleClick: () => setDay("sunday"),
-            },
-        ],
+        () =>
+            ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((value) => ({
+                label: value[0].toUpperCase() + value.slice(1),
+                value,
+                handleClick: () => setDay(value),
+            })),
         []
     );
 
-    useEffect(function () {
-        navigator.geolocation.getCurrentPosition((position) => {
-            setIsLoading(true);
-            setLocation([position.coords.latitude, position.coords.longitude]);
-            setIsLoading(false);
-        });
-    }, []);
+    const dailyForecastObj = useMemo(() => parseDailyWeather(dailyForecast), [dailyForecast]);
+    const hourlyForecastObj = useMemo(() => parseHourlyWeather(hourlyForecast), [hourlyForecast]);
 
-    useEffect(
-        function () {
-            if (!location) return null;
-
-            weatherRef.current.setCoordinates(location[0], location[1]).setUnits(unitsObjAPI);
-        },
-        [location, unitsObjAPI]
-    );
-
-    useEffect(
-        function () {
-            if (!location.length) return;
-
-            async function getData() {
-                setIsLoading(true);
-                const currentWeather = await weatherRef.current.getCurrentWeather();
-                const hourlyWeather = await weatherRef.current.getHourlyWeather();
-                const dailyWeather = await weatherRef.current.getDailyWeather();
-
-                setCurrentWeather(currentWeather.current);
-                setHourlyForecast(hourlyWeather.hourly);
-                setDailyForecast(dailyWeather.daily);
+    // --- Get Geolocation ---
+    useEffect(() => {
+        setIsLoading(true);
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                setLocation([pos.coords.latitude, pos.coords.longitude]);
+            },
+            (err) => {
+                console.error("Geolocation error:", err);
+                setError("Unable to get your location.");
                 setIsLoading(false);
             }
+        );
+    }, []);
 
-            getData();
-        },
-        [location, unitsObjAPI]
-    );
+    // --- Update APIWeather instance when location or units change ---
+    useEffect(() => {
+        if (!location.length) return;
+        weatherRef.current.setCoordinates(location[0], location[1]).setUnits(unitsObjAPI);
+    }, [location, unitsObjAPI]);
 
-    if (isLoading) return null;
+    // --- Fetch Weather Data ---
+    useEffect(() => {
+        if (!location.length) return;
+
+        async function getData() {
+            setIsLoading(true);
+            setError(null);
+
+            try {
+                const [current, hourly, daily] = await Promise.all([
+                    weatherRef.current.getCurrentWeather(),
+                    weatherRef.current.getHourlyWeather(),
+                    weatherRef.current.getDailyWeather(),
+                ]);
+
+                // enrich current
+                current.current.city = current.timezone.split("/")[1];
+                current.current.icon = determineIcon(current.current.weather_code);
+
+                setCurrentWeather(current.current);
+                setHourlyForecast(hourly.hourly);
+                setDailyForecast(daily.daily);
+            } catch (err) {
+                console.error("Weather fetch error:", err);
+                setError("Failed to fetch weather data.");
+            } finally {
+                setIsLoading(false);
+            }
+        }
+
+        getData();
+    }, [location, unitsObjAPI]);
 
     return (
         <WeatherContext.Provider
             value={{
                 location,
                 setLocation,
-                setCurrentWeather,
-                setDailyForecast,
-                setHourlyForecast,
                 currentWeather,
+                dailyForecast,
+                hourlyForecast,
+                dailyForecastObj,
+                hourlyForecastObj,
                 days,
                 day,
-                hourlyForecast,
-                dailyForecast,
                 isLoading,
-                setIsLoading,
+                error,
+                unitsObjAPI,
             }}
         >
             {children}
@@ -138,9 +193,7 @@ function WeatherProvider({ children }) {
 
 function useWeather() {
     const context = useContext(WeatherContext);
-
-    if (context === undefined) throw new Error("WeatherContext was used outside of the scope of WeatherProvider");
-
+    if (context === undefined) throw new Error("useWeather must be used within WeatherProvider");
     return context;
 }
 
