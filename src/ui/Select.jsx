@@ -53,7 +53,7 @@ const DropdownButton = styled.button`
     border: none;
     border-radius: 1rem;
 
-    padding: ${(props) => (props.active ? "1rem 1.5rem" : "1rem 1.5rem;")};
+    padding: ${(props) => (props.active ? "1rem 1.5rem" : "1rem 1.5rem")};
 
     display: flex;
     justify-content: space-between;
