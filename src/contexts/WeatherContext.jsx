@@ -11,6 +11,7 @@ import iconSnow from "../assets/images/icon-snow.webp";
 import iconStorm from "../assets/images/icon-storm.webp";
 import iconOvercast from "../assets/images/icon-overcast.webp";
 import iconDrizzle from "../assets/images/icon-drizzle.webp";
+import { searchPlace } from "../services/apiSearch";
 
 const WeatherContext = createContext();
 
@@ -92,6 +93,7 @@ function WeatherProvider({ children }) {
     const { unitsObjAPI } = useUnits();
 
     const [location, setLocation] = useState([]);
+    const [search, setSearch] = useState("");
     const [currentWeather, setCurrentWeather] = useState({});
     const [dailyForecast, setDailyForecast] = useState({});
     const [hourlyForecast, setHourlyForecast] = useState({});
@@ -184,6 +186,8 @@ function WeatherProvider({ children }) {
                 isLoading,
                 error,
                 unitsObjAPI,
+                search,
+                setSearch,
             }}
         >
             {children}

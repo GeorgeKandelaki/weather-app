@@ -6,7 +6,7 @@ import Header from "./ui/Header";
 import WeatherDetail from "./components/WeatherDetail";
 import Search from "./ui/Search";
 import { UnitsProvider } from "./contexts/UnitsContext";
-import { WeatherProvider } from "./contexts/WeatherContext";
+import { useWeather, WeatherProvider } from "./contexts/WeatherContext";
 
 const StyledApp = styled.div`
     margin: 4.8rem 9.6rem;
@@ -24,7 +24,7 @@ const SearchContainer = styled.div`
 `;
 
 function App() {
-    const [search, setSearch] = useState("");
+    const { search, setSearch } = useWeather();
 
     return (
         <>
