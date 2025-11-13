@@ -92,14 +92,17 @@ function parseHourlyWeather(data) {
 function WeatherProvider({ children }) {
     const { unitsObjAPI } = useUnits();
 
-    const [location, setLocation] = useState(() => {
-        try {
-            const stored = JSON.parse(localStorage.getItem("location"));
-            return Array.isArray(stored) && stored.length ? stored : [];
-        } catch {
-            return [];
-        }
-    });
+    // const [location, setLocation] = useState(() => {
+    //     try {
+    //         const stored = JSON.parse(localStorage.getItem("location"));
+    //         return Array.isArray(stored) && stored.length ? stored : [];
+    //     } catch {
+    //         return [];
+    //     }
+    // });
+
+    const [location, setLocation] = useState([41.8010843, 44.8051021]);
+
     const [currentWeather, setCurrentWeather] = useState({});
     const [dailyForecast, setDailyForecast] = useState({});
     const [hourlyForecast, setHourlyForecast] = useState({});
