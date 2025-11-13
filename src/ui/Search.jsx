@@ -132,11 +132,12 @@ function Search({ value, onChange, onSearch, isSearching, results, onClick }) {
                                 key={result.id}
                                 onClick={() => {
                                     onClick?.([result.latitude, result.longitude]);
-                                    setIsOpen(false);
+                                    onChange("");
                                     localStorage.setItem(
                                         "location",
                                         JSON.stringify([result.latitude, result.longitude])
                                     );
+                                    setIsOpen(false);
                                 }}
                             />
                         ))
