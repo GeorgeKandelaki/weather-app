@@ -23,9 +23,9 @@ function DailyForecast({ days, isLoading }) {
         <StyledDailyForecast>
             <Heading>Daily Forecast</Heading>
             <Forecast>
-                {days.map((day) => (
-                    <DailyForecastItem forecast={day} key={day.day} isLoading={isLoading} />
-                ))}
+                {isLoading
+                    ? Array.from({ length: 7 }).map((_, i) => <DailyForecastItem key={i} isLoading={isLoading} />)
+                    : days.map((day) => <DailyForecastItem key={day.day} forecast={day} isLoading={isLoading} />)}
             </Forecast>
         </StyledDailyForecast>
     );

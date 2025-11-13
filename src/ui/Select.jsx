@@ -81,7 +81,6 @@ const DropdownHeading = styled.p`
 
 function Select({ label, icon, options }) {
     const [isOpen, setIsOpen] = useState(false);
-    const [select, setSelect] = useState(label || "");
 
     function loopOverOptions(data) {
         const children = [];
@@ -118,7 +117,6 @@ function Select({ label, icon, options }) {
                         key={data[i].value}
                         onClick={() => {
                             data[i]?.handleClick?.();
-                            setSelect(data[i].label);
                             setIsOpen(false);
                         }}
                     >
@@ -134,7 +132,8 @@ function Select({ label, icon, options }) {
     return (
         <StyledSelect>
             <OpenButton onClick={() => setIsOpen((open) => !open)}>
-                {icon && <img src={icon} alt="units icon" />} {select}
+                {icon && <img src={icon} alt="units icon" />}
+                {label}
                 <img src={iconArrow} alt="dropdown icon" />
             </OpenButton>
 

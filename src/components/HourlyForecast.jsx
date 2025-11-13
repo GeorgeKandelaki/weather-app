@@ -33,18 +33,17 @@ const Forecast = styled.div`
 function HourlyForecast({ hours, isLoading }) {
     const { days } = useWeather();
 
-    if (isLoading) return null;
-
     return (
         <StyledHourlyForecast>
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <Heading>Hourly Forecast</Heading>
-                <Select options={days} label={capitalize(hours[0].weekday)} />
+                <Select options={days} label={isLoading ? "---" : capitalize(hours[0].weekday)} />
             </div>
+
             <Forecast>
-                {hours.map((hour) => (
-                    <HourlyForecastItem forecast={hour} key={hour.id} isLoading={isLoading} />
-                ))}
+                {isLoading
+                    ? Array.from({ length: 24 }).map((_, i) => <HourlyForecastItem key={i} isLoading={isLoading} />)
+                    : hours.map((hour) => <HourlyForecastItem forecast={hour} key={hour.id} isLoading={isLoading} />)}
             </Forecast>
         </StyledHourlyForecast>
     );

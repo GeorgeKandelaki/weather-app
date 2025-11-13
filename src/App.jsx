@@ -5,8 +5,7 @@ import GlobalStyles from "./styles/GlobalStyles";
 import Header from "./ui/Header";
 import WeatherDetail from "./components/WeatherDetail";
 import Search from "./ui/Search";
-import { UnitsProvider } from "./contexts/UnitsContext";
-import { useWeather, WeatherProvider } from "./contexts/WeatherContext";
+import { useWeather } from "./contexts/WeatherContext";
 
 const StyledApp = styled.div`
     margin: 4.8rem 9.6rem;
@@ -24,25 +23,33 @@ const SearchContainer = styled.div`
 `;
 
 function App() {
-    const { search, setSearch } = useWeather();
+    const { search, setSearch, searchForAPlace, error, setLocation, searchResults, isSearching } = useWeather();
+
+    function handleSearch(e) {
+        e.preventDefault();
+
+        searchForAPlace(search);
+    }
 
     return (
         <>
             <GlobalStyles />
-            <UnitsProvider>
-                <WeatherProvider>
-                    <StyledApp>
-                        <Header />
+            <StyledApp>
+                <Header />
+                <SearchContainer>
+                    <h1>How's the sky looking today?</h1>
+                    <Search
+                        value={search}
+                        onChange={setSearch}
+                        onSearch={handleSearch}
+                        isSearching={isSearching}
+                        results={searchResults}
+                        onClick={setLocation}
+                    />
+                </SearchContainer>
 
-                        <SearchContainer>
-                            <h1>How's the sky looking today?</h1>
-                            <Search value={search} onChange={setSearch} />
-                        </SearchContainer>
-
-                        <WeatherDetail />
-                    </StyledApp>
-                </WeatherProvider>
-            </UnitsProvider>
+                <WeatherDetail />
+            </StyledApp>
         </>
     );
 }

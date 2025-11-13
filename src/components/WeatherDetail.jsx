@@ -25,14 +25,13 @@ const StyledWeatherDetail = styled.div`
 
 function WeatherDetail() {
     const { currentWeather, isLoading, dailyForecastObj, day, hourlyForecastObj, unitsObjAPI } = useWeather();
-    const info = [
-        { label: "Feels Like", value: `${currentWeather.apparent_temperature}°` },
-        { label: "Humidity", value: `${currentWeather.relative_humidity_2m}%` },
-        { label: "Wind", value: `${currentWeather.wind_speed_10m} ${unitsObjAPI.wind_speed_unit}` },
-        { label: "Precipitation", value: `${currentWeather.precipitation} ${unitsObjAPI.precipitation_unit}` },
-    ];
 
-    if (isLoading) return null;
+    const info = [
+        { label: "Feels Like", value: `${currentWeather?.apparent_temperature}°` },
+        { label: "Humidity", value: `${currentWeather?.relative_humidity_2m}%` },
+        { label: "Wind", value: `${currentWeather?.wind_speed_10m} ${unitsObjAPI?.wind_speed_unit}` },
+        { label: "Precipitation", value: `${currentWeather?.precipitation} ${unitsObjAPI?.precipitation_unit}` },
+    ];
 
     return (
         <StyledWeatherDetail>
@@ -45,7 +44,7 @@ function WeatherDetail() {
                 isLoading={isLoading}
             />
             <DailyForecast days={dailyForecastObj} isLoading={isLoading} />
-            <HourlyForecast hours={hourlyForecastObj[day]} isLoading={isLoading} />
+            <HourlyForecast hours={hourlyForecastObj?.[day]} isLoading={isLoading} />
         </StyledWeatherDetail>
     );
 }

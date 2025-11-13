@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { isEmpty, formatDate } from "../utils/utils";
 import APIWeather from "../services/apiWeather";
 import { useUnits } from "./UnitsContext";
@@ -93,17 +93,20 @@ function WeatherProvider({ children }) {
     const { unitsObjAPI } = useUnits();
 
     const [location, setLocation] = useState([]);
-    const [search, setSearch] = useState("");
     const [currentWeather, setCurrentWeather] = useState({});
     const [dailyForecast, setDailyForecast] = useState({});
     const [hourlyForecast, setHourlyForecast] = useState({});
     const [day, setDay] = useState(() => formatDate(Date.now(), { weekday: "long" }).toLowerCase());
+
+    const [search, setSearch] = useState("");
+    const [searchResults, setSearchResults] = useState({});
+    const [isSearching, setIsSearching] = useState(false);
+
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
 
     const weatherRef = useRef(new APIWeather(location[0], location[1], unitsObjAPI));
 
-    // --- Memoized Days (no re-renders) ---
     const days = useMemo(
         () =>
             ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"].map((value) => ({
@@ -116,6 +119,21 @@ function WeatherProvider({ children }) {
 
     const dailyForecastObj = useMemo(() => parseDailyWeather(dailyForecast), [dailyForecast]);
     const hourlyForecastObj = useMemo(() => parseHourlyWeather(hourlyForecast), [hourlyForecast]);
+
+    const searchForAPlace = useCallback(async function (name) {
+        setIsSearching(true);
+        try {
+            const data = await searchPlace(name);
+
+            setSearchResults(data.results);
+            return data.results;
+        } catch (err) {
+            console.error(err);
+            setError(err);
+        } finally {
+            setIsSearching(false);
+        }
+    }, []);
 
     // --- Get Geolocation ---
     useEffect(() => {
@@ -188,6 +206,10 @@ function WeatherProvider({ children }) {
                 unitsObjAPI,
                 search,
                 setSearch,
+                searchForAPlace,
+                searchResults,
+                isSearching,
+                setIsSearching,
             }}
         >
             {children}
