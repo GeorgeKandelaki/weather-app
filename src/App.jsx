@@ -9,6 +9,10 @@ import { useWeather } from "./contexts/WeatherContext";
 
 const StyledApp = styled.div`
     margin: 4.8rem 9.6rem;
+
+    @media screen and (max-width: 60em) {
+        margin: 2rem 4rem;
+    }
 `;
 
 const SearchContainer = styled.div`
@@ -37,7 +41,7 @@ function App() {
             <StyledApp>
                 <Header />
                 <SearchContainer>
-                    <h1>How's the sky looking today?</h1>
+                    <h1 style={{ textAlign: "center" }}>How's the sky looking today?</h1>
                     <Search
                         value={search}
                         onChange={setSearch}

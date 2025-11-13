@@ -12,6 +12,11 @@ const StyledHourlyForecast = styled.div`
     background-color: var(--color-neutral-800);
     padding: 1.4rem 2.4rem;
     border-radius: 2rem;
+
+    @media screen and (max-width: 65em) {
+        grid-column: 1;
+        grid-row: 4 / -1;
+    }
 `;
 
 const Heading = styled.p`

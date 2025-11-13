@@ -10,12 +10,22 @@ const shimmer = keyframes`
 `;
 
 const StyledDailyForecastItem = styled.div`
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
     background-color: var(--color-neutral-800);
-    padding: 1.8rem 1.5rem;
+    padding: 1.8rem 1.5rem 0 1.5rem;
     border-radius: 1.5rem;
     text-align: center;
-    min-height: 13rem;
+    min-height: 14rem;
+    max-width: 13rem;
     width: 100%;
+
+    @media screen and (max-width: 65em) {
+        padding: 1.2rem 1rem 0 1rem;
+        max-width: 10rem;
+    }
 `;
 
 const skeletonStyle = css`
@@ -36,6 +46,11 @@ const Icon = styled.div`
     img {
         width: 40px;
         height: 40px;
+
+        @media screen and (max-width: 65em) {
+            width: 4rem;
+            height: 4rem;
+        }
     }
 `;
 

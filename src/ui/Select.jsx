@@ -4,6 +4,7 @@ import styled from "styled-components";
 import iconCheckmark from "../assets/images/icon-checkmark.svg";
 import iconArrow from "../assets/images/icon-dropdown.svg";
 import { capitalize } from "../utils/utils";
+import useOutsideClick from "../hooks/useOutsideClick";
 
 const StyledSelect = styled.div`
     position: relative;
@@ -77,10 +78,15 @@ const DropdownContainer = styled.div`
 const DropdownHeading = styled.p`
     color: var(--color-neutral-300);
     font-size: 1.6rem;
+
+    @media screen and (max-width: 60em) {
+        font-size: 1.4rem;
+    }
 `;
 
 function Select({ label, icon, options }) {
     const [isOpen, setIsOpen] = useState(false);
+    const ref = useOutsideClick(() => setIsOpen(false));
 
     function loopOverOptions(data) {
         const children = [];
@@ -130,7 +136,7 @@ function Select({ label, icon, options }) {
     }
 
     return (
-        <StyledSelect>
+        <StyledSelect ref={ref}>
             <OpenButton onClick={() => setIsOpen((open) => !open)}>
                 {icon && <img src={icon} alt="units icon" />}
                 {label}

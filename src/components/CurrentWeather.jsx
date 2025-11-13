@@ -21,12 +21,24 @@ const Weather = styled.div`
     display: flex;
     align-items: center;
     justify-content: space-between;
+
+    @media screen and (max-width: 65em) {
+        padding: 4rem;
+        flex-direction: column;
+        align-items: center;
+    }
 `;
 
 const WeatherInfo = styled.div`
     display: flex;
     /* align-items: center; */
     gap: 1.8rem;
+
+    @media screen and (max-width: 65em) {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 1fr 1fr;
+    }
 `;
 
 const Location = styled.p`
@@ -43,6 +55,10 @@ const Temperature = styled.p`
     font-weight: 700;
     font-size: 12rem;
     line-height: 2.5;
+
+    @media screen and (max-width: 65em) {
+        font-size: 6rem;
+    }
 `;
 
 const TempContainer = styled.div`
@@ -53,6 +69,21 @@ const TempContainer = styled.div`
     & img {
         width: 15rem;
         height: 15rem;
+
+        @media screen and (max-width: 65em) {
+            width: 10rem;
+            height: 10rem;
+        }
+    }
+
+    @media screen and (max-width: 65em) {
+        gap: 1.2rem;
+    }
+`;
+
+const Row = styled.div`
+    @media screen and (max-width: 65em) {
+        text-align: center;
     }
 `;
 
@@ -75,10 +106,10 @@ function CurrentWeather({ temp, location, date, icon, info, isLoading }) {
                     <Loading />
                 ) : (
                     <>
-                        <div>
-                            <Location>{location}</Location>
+                        <Row>
+                            <Location>{location.replace("_", " ")}</Location>
                             <Date>{date}</Date>
-                        </div>
+                        </Row>
 
                         <TempContainer>
                             <img src={icon} alt="Icon of the weather" />

@@ -4,6 +4,11 @@ import DailyForecastItem from "./DailyForecastItem";
 const StyledDailyForecast = styled.div`
     grid-column: 1 / 2;
     grid-row: 2 / 3;
+
+    @media screen and (max-width: 60em) {
+        grid-column: 1;
+        grid-row: 2 / 3;
+    }
 `;
 
 const Heading = styled.p`
@@ -16,6 +21,10 @@ const Forecast = styled.div`
     display: flex;
     align-items: center;
     gap: 1.5rem;
+
+    @media screen and (max-width: 60em) {
+        flex-wrap: wrap;
+    }
 `;
 
 function DailyForecast({ days, isLoading }) {

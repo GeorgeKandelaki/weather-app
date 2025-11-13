@@ -15,15 +15,24 @@ const StyledSearch = styled.div`
     background-color: var(--color-neutral-800);
     padding: 1.2rem 2rem;
     border-radius: 1rem;
+    width: 50rem;
+
+    @media screen and (max-width: 60em) {
+        width: calc(100% - 5rem);
+    }
 
     & input {
-        width: 100%;
+        width: 50rem;
         background-color: inherit;
         border: none;
         outline: none;
         font-size: 1.6rem;
         color: var(--color-neutral-500);
         line-height: 1;
+
+        @media screen and (max-width: 60em) {
+            width: calc(100% - 5rem);
+        }
     }
 
     & input::placeholder {
@@ -38,9 +47,15 @@ const SearchButton = styled.button`
     border-radius: 1rem;
     font-size: 1.8rem;
     transition: opacity 0.3s;
+    width: 100%;
 
     &:hover {
         opacity: 0.5;
+    }
+
+    @media screen and (max-width: 60em) {
+        padding: 1.2rem 2.4rem;
+        width: calc(100% - 5rem);
     }
 `;
 
@@ -57,30 +72,40 @@ const Results = styled.div`
     gap: 1rem;
 `;
 
+const Form = styled.form`
+    @media screen and (max-width: 60em) {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+`;
+
 function Search({ value, onChange, onSearch, isSearching, results, onClick }) {
     const [isOpen, setIsOpen] = useState(false);
     const ref = useOutsideClick(() => setIsOpen(false));
 
     return (
-        <form
-            onSubmit={(e) => {
-                onSearch(e);
-                setIsOpen(true);
-            }}
-            style={{ display: "flex", gap: "1.5rem" }}
+        <div
             ref={ref}
+            style={{
+                position: "relative",
+                width: "50rem",
+                display: "flex",
+                flexDirection: "column",
+                gap: "1.5rem",
+            }}
         >
-            <div
-                style={{
-                    position: "relative",
-                    width: "50rem",
-                    display: "flex",
-                    flexDirection: "column",
+            <Form
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    onSearch(e);
+                    setIsOpen(true);
                 }}
+                style={{ display: "flex", gap: "1.5rem" }}
             >
                 <StyledSearch>
                     <div>
-                        <img src={searchIcon} alt="Image of the magnifying glass" />
+                        <img src={searchIcon} alt="magnifying glass" />
                     </div>
                     <input
                         type="text"
@@ -89,28 +114,36 @@ function Search({ value, onChange, onSearch, isSearching, results, onClick }) {
                         onChange={(e) => onChange(e.target.value)}
                     />
                 </StyledSearch>
-                {isEmpty(results) && !isOpen ? (
-                    ""
-                ) : (
-                    <Results>
-                        {isSearching && isOpen ? (
-                            <p>
-                                <img src={iconLoading} alt="loading icon" /> Search in progress
-                            </p>
-                        ) : (
-                            results.map((result) => (
-                                <SearchResultItem
-                                    result={result}
-                                    key={result.id}
-                                    onClick={() => onClick?.([result.latitude, result.longitude])}
-                                />
-                            ))
-                        )}
-                    </Results>
-                )}
-            </div>
-            <SearchButton>Search</SearchButton>
-        </form>
+                <SearchButton>Search</SearchButton>
+            </Form>
+
+            {isOpen && (
+                <Results>
+                    {isSearching ? (
+                        <p style={{ textAlign: "center" }}>
+                            <img src={iconLoading} alt="loading icon" /> Search in progress
+                        </p>
+                    ) : isEmpty(results) ? (
+                        <p style={{ textAlign: "center" }}>No results :(</p>
+                    ) : (
+                        results.map((result) => (
+                            <SearchResultItem
+                                result={result}
+                                key={result.id}
+                                onClick={() => {
+                                    onClick?.([result.latitude, result.longitude]);
+                                    setIsOpen(false);
+                                    localStorage.setItem(
+                                        "location",
+                                        JSON.stringify([result.latitude, result.longitude])
+                                    );
+                                }}
+                            />
+                        ))
+                    )}
+                </Results>
+            )}
+        </div>
     );
 }
 

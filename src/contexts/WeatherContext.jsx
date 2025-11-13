@@ -92,7 +92,14 @@ function parseHourlyWeather(data) {
 function WeatherProvider({ children }) {
     const { unitsObjAPI } = useUnits();
 
-    const [location, setLocation] = useState([]);
+    const [location, setLocation] = useState(() => {
+        try {
+            const stored = JSON.parse(localStorage.getItem("location"));
+            return Array.isArray(stored) && stored.length ? stored : [];
+        } catch {
+            return [];
+        }
+    });
     const [currentWeather, setCurrentWeather] = useState({});
     const [dailyForecast, setDailyForecast] = useState({});
     const [hourlyForecast, setHourlyForecast] = useState({});
@@ -135,12 +142,15 @@ function WeatherProvider({ children }) {
         }
     }, []);
 
-    // --- Get Geolocation ---
     useEffect(() => {
+        if (location.length) return; // skip if already saved
+
         setIsLoading(true);
         navigator.geolocation.getCurrentPosition(
             (pos) => {
-                setLocation([pos.coords.latitude, pos.coords.longitude]);
+                const coords = [pos.coords.latitude, pos.coords.longitude];
+                setLocation(coords);
+                localStorage.setItem("location", JSON.stringify(coords));
             },
             (err) => {
                 console.error("Geolocation error:", err);

@@ -21,6 +21,14 @@ const StyledWeatherDetail = styled.div`
     grid-gap: 3.2rem;
 
     margin-top: 3.2rem;
+
+    @media screen and (max-width: 65em) {
+        grid-template-columns: 1fr;
+        justify-content: center;
+        justify-items: center;
+        align-items: center;
+        gap: 0.5rem;
+    }
 `;
 
 function WeatherDetail() {

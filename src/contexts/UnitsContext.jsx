@@ -1,11 +1,32 @@
-import { createContext, useContext, useState, useMemo } from "react";
+import { createContext, useContext, useState, useMemo, useEffect } from "react";
 
 const UnitsContext = createContext();
 
 function UnitsProvider({ children }) {
-    const [temperature, setTemperature] = useState("celsius");
-    const [windSpeed, setWindSpeed] = useState("kmh");
-    const [precipitation, setPrecipitation] = useState("mm");
+    const getStoredUnits = () => {
+        try {
+            const stored = JSON.parse(localStorage.getItem("units"));
+            return (
+                stored || {
+                    temperature_unit: "celsius",
+                    wind_speed_unit: "kmh",
+                    precipitation_unit: "mm",
+                }
+            );
+        } catch {
+            return {
+                temperature_unit: "celsius",
+                wind_speed_unit: "kmh",
+                precipitation_unit: "mm",
+            };
+        }
+    };
+
+    const stored = getStoredUnits();
+
+    const [temperature, setTemperature] = useState(stored.temperature_unit);
+    const [windSpeed, setWindSpeed] = useState(stored.wind_speed_unit);
+    const [precipitation, setPrecipitation] = useState(stored.precipitation_unit);
 
     const options = useMemo(
         () => ({
@@ -24,8 +45,18 @@ function UnitsProvider({ children }) {
                 },
             ],
             wind_speed: [
-                { label: "km/h", value: "kmh", active: windSpeed === "kmh", handleClick: () => setWindSpeed("kmh") },
-                { label: "mph", value: "mph", active: windSpeed === "mph", handleClick: () => setWindSpeed("mph") },
+                {
+                    label: "km/h",
+                    value: "kmh",
+                    active: windSpeed === "kmh",
+                    handleClick: () => setWindSpeed("kmh"),
+                },
+                {
+                    label: "mph",
+                    value: "mph",
+                    active: windSpeed === "mph",
+                    handleClick: () => setWindSpeed("mph"),
+                },
             ],
             precipitation: [
                 {
@@ -54,6 +85,10 @@ function UnitsProvider({ children }) {
         [temperature, windSpeed, precipitation]
     );
 
+    useEffect(() => {
+        localStorage.setItem("units", JSON.stringify(unitsObjAPI));
+    }, [unitsObjAPI]);
+
     return (
         <UnitsContext.Provider
             value={{
@@ -74,9 +109,7 @@ function UnitsProvider({ children }) {
 
 function useUnits() {
     const context = useContext(UnitsContext);
-
-    if (context === undefined) throw new Error("UnitsContext was used outside of the scope of UnitsProvider.");
-
+    if (!context) throw new Error("useUnits must be used within a UnitsProvider");
     return context;
 }
 
