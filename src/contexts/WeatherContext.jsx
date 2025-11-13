@@ -145,23 +145,23 @@ function WeatherProvider({ children }) {
         }
     }, []);
 
-    useEffect(() => {
-        if (location.length) return; // skip if already saved
+    // useEffect(() => {
+    //     if (location.length) return; // skip if already saved
 
-        setIsLoading(true);
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const coords = [pos.coords.latitude, pos.coords.longitude];
-                setLocation(coords);
-                localStorage.setItem("location", JSON.stringify(coords));
-            },
-            (err) => {
-                console.error("Geolocation error:", err);
-                setError("Unable to get your location.");
-                setIsLoading(false);
-            }
-        );
-    }, []);
+    //     setIsLoading(true);
+    //     navigator.geolocation.getCurrentPosition(
+    //         (pos) => {
+    //             const coords = [pos.coords.latitude, pos.coords.longitude];
+    //             setLocation(coords);
+    //             localStorage.setItem("location", JSON.stringify(coords));
+    //         },
+    //         (err) => {
+    //             console.error("Geolocation error:", err);
+    //             setError("Unable to get your location.");
+    //             setIsLoading(false);
+    //         }
+    //     );
+    // }, []);
 
     // --- Update APIWeather instance when location or units change ---
     useEffect(() => {
