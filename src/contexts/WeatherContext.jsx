@@ -92,16 +92,14 @@ function parseHourlyWeather(data) {
 function WeatherProvider({ children }) {
     const { unitsObjAPI } = useUnits();
 
-    // const [location, setLocation] = useState(() => {
-    //     try {
-    //         const stored = JSON.parse(localStorage.getItem("location"));
-    //         return Array.isArray(stored) && stored.length ? stored : [];
-    //     } catch {
-    //         return [];
-    //     }
-    // });
-
-    const [location, setLocation] = useState([41.8010843, 44.8051021]);
+    const [location, setLocation] = useState(() => {
+        try {
+            const stored = JSON.parse(localStorage.getItem("location"));
+            return Array.isArray(stored) && stored.length ? stored : [];
+        } catch {
+            return [];
+        }
+    });
 
     const [currentWeather, setCurrentWeather] = useState({});
     const [dailyForecast, setDailyForecast] = useState({});
@@ -145,23 +143,23 @@ function WeatherProvider({ children }) {
         }
     }, []);
 
-    // useEffect(() => {
-    //     if (location.length) return; // skip if already saved
+    useEffect(() => {
+        if (location.length) return; // skip if already saved
 
-    //     setIsLoading(true);
-    //     navigator.geolocation.getCurrentPosition(
-    //         (pos) => {
-    //             const coords = [pos.coords.latitude, pos.coords.longitude];
-    //             setLocation(coords);
-    //             localStorage.setItem("location", JSON.stringify(coords));
-    //         },
-    //         (err) => {
-    //             console.error("Geolocation error:", err);
-    //             setError("Unable to get your location.");
-    //             setIsLoading(false);
-    //         }
-    //     );
-    // }, []);
+        setIsLoading(true);
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                const coords = [pos.coords.latitude, pos.coords.longitude];
+                setLocation(coords);
+                localStorage.setItem("location", JSON.stringify(coords));
+            },
+            (err) => {
+                console.error("Geolocation error:", err);
+                setError("Unable to get your location.");
+                setIsLoading(false);
+            }
+        );
+    }, []);
 
     // --- Update APIWeather instance when location or units change ---
     useEffect(() => {
